@@ -6,6 +6,8 @@
 #include "FreeRTOS.h"
 #include "task.h"
  
+#include "serial.h"
+
 void Delay(uint32_t nCount)
 {
      __IO uint32_t i;   //__IO mean volatile
@@ -53,14 +55,16 @@ void led4_task(void *p)
     vTaskDelay(1000);
     GPIO_ResetBits(GPIOG, GPIO_Pin_12);  //Delay(5000000);
     vTaskDelay(1000);
+    
+    vSerialPutString(0, "zzz", 3);
   }
 }
  
 void main(void)
 {
+	char str[4] = "zzz";
 
   
-  //printf("zzz\n");
     GPIO_InitTypeDef GPIO_InitStructure;    //structure
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOG, ENABLE);    
  
@@ -69,11 +73,15 @@ void main(void)
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
     GPIO_Init(GPIOG, &GPIO_InitStructure);
     
+    xSerialPortInitMinimal(9600, 10);
+    
   xTaskCreate(led1_task, (signed char *)"led1_task", 128, 0, tskIDLE_PRIORITY+1, 0);
   xTaskCreate(led2_task, (signed char *)"led2_task", 128, 0, tskIDLE_PRIORITY+2, 0);
   xTaskCreate(led3_task, (signed char *)"led3_task", 128, 0, tskIDLE_PRIORITY+3, 0);
   xTaskCreate(led4_task, (signed char *)"led4_task", 128, 0, tskIDLE_PRIORITY+4, 0);
-  
+    
+   vSerialPutString(0, str, 3);
+   
   vTaskStartScheduler();
 }
   

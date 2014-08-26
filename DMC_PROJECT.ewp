@@ -2087,6 +2087,9 @@
     <file>
       <name>$PROJ_DIR$\main.c</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\serial.c</name>
+    </file>
   </group>
 </project>
 
