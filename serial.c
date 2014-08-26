@@ -181,6 +181,16 @@ xComPortHandle xSerialPortInitMinimal( unsigned long ulWantedBaud, unsigned port
 		NVIC_Init(&NVIC_InitStructure);
 
 		USART_Cmd( USART1, ENABLE );		
+
+
+#ifndef CKLEE_IRDA
+		USART_SetPrescaler(USART1, 0x1);
+		/* Configure the USARTy IrDA mode */
+		USART_IrDAConfig(USART1, USART_IrDAMode_Normal);
+
+		/* Enable the USARTy IrDA mode */
+		USART_IrDACmd(USART1, ENABLE);
+#endif
 	}
 	else
 	{

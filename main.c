@@ -75,12 +75,12 @@ void main(void)
     
     xSerialPortInitMinimal(9600, 10);
     
-  xTaskCreate(led1_task, (signed char *)"led1_task", 128, 0, tskIDLE_PRIORITY+1, 0);
-  xTaskCreate(led2_task, (signed char *)"led2_task", 128, 0, tskIDLE_PRIORITY+2, 0);
-  xTaskCreate(led3_task, (signed char *)"led3_task", 128, 0, tskIDLE_PRIORITY+3, 0);
-  xTaskCreate(led4_task, (signed char *)"led4_task", 128, 0, tskIDLE_PRIORITY+4, 0);
+  //xTaskCreate(led1_task, (signed char *)"led1_task", 128, 0, tskIDLE_PRIORITY+1, 0);
+  //xTaskCreate(led2_task, (signed char *)"led2_task", 128, 0, tskIDLE_PRIORITY+2, 0);
+  //xTaskCreate(led3_task, (signed char *)"led3_task", 128, 0, tskIDLE_PRIORITY+3, 0);
+  //xTaskCreate(led4_task, (signed char *)"led4_task", 128, 0, tskIDLE_PRIORITY+4, 0);
     
-   vSerialPutString(0, str, 3);
+   //vSerialPutString(0, str, 3);
    
   vTaskStartScheduler();
 }
