@@ -14,11 +14,35 @@ void Delay(uint32_t nCount)
  
 void led1_task(void *p)
 {
+	int value;
+
   vTaskDelay(100);
   while(1) {
-    GPIO_SetBits(GPIOG, GPIO_Pin_6);  //Delay(1000000); 
-    vTaskDelay(1000);
-   GPIO_ResetBits(GPIOG, GPIO_Pin_6);  //Delay(1000000);
+	  value = adc_convert();
+	  if (value < 1024) {
+		  GPIO_SetBits(GPIOG, GPIO_Pin_6);  //Delay(1000000); 
+		  GPIO_ResetBits(GPIOG, GPIO_Pin_7);  //Delay(1000000);
+		  GPIO_ResetBits(GPIOG, GPIO_Pin_10);  //Delay(1000000);
+		  GPIO_ResetBits(GPIOG, GPIO_Pin_12);  //Delay(1000000);
+	  }
+	  else if (value < 2048) {
+		  GPIO_SetBits(GPIOG, GPIO_Pin_7);  //Delay(1000000); 
+		  GPIO_ResetBits(GPIOG, GPIO_Pin_6);  //Delay(1000000);
+		  GPIO_ResetBits(GPIOG, GPIO_Pin_10);  //Delay(1000000);
+		  GPIO_ResetBits(GPIOG, GPIO_Pin_12);  //Delay(1000000);
+	  }
+	  else if (value < 3072) {
+		  GPIO_SetBits(GPIOG, GPIO_Pin_10);  //Delay(1000000); 
+		  GPIO_ResetBits(GPIOG, GPIO_Pin_6);  //Delay(1000000);
+		  GPIO_ResetBits(GPIOG, GPIO_Pin_7);  //Delay(1000000);
+		  GPIO_ResetBits(GPIOG, GPIO_Pin_12);  //Delay(1000000);
+	  }
+	  else {
+		  GPIO_SetBits(GPIOG, GPIO_Pin_12);  //Delay(1000000); 
+		  GPIO_ResetBits(GPIOG, GPIO_Pin_6);  //Delay(1000000);
+		  GPIO_ResetBits(GPIOG, GPIO_Pin_7);  //Delay(1000000);
+		  GPIO_ResetBits(GPIOG, GPIO_Pin_10);  //Delay(1000000);
+	  }
     vTaskDelay(1000);
   }
 }
@@ -68,11 +92,13 @@ void main(void)
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
     GPIO_Init(GPIOG, &GPIO_InitStructure);
+
+	adc_configure();
     
   xTaskCreate(led1_task, (signed char *)"led1_task", 128, 0, tskIDLE_PRIORITY+1, 0);
-  xTaskCreate(led2_task, (signed char *)"led2_task", 128, 0, tskIDLE_PRIORITY+2, 0);
-  xTaskCreate(led3_task, (signed char *)"led3_task", 128, 0, tskIDLE_PRIORITY+3, 0);
-  xTaskCreate(led4_task, (signed char *)"led4_task", 128, 0, tskIDLE_PRIORITY+4, 0);
+  //xTaskCreate(led2_task, (signed char *)"led2_task", 128, 0, tskIDLE_PRIORITY+2, 0);
+  //xTaskCreate(led3_task, (signed char *)"led3_task", 128, 0, tskIDLE_PRIORITY+3, 0);
+  //xTaskCreate(led4_task, (signed char *)"led4_task", 128, 0, tskIDLE_PRIORITY+4, 0);
   
   vTaskStartScheduler();
 }
