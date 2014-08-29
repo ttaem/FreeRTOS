@@ -167,15 +167,15 @@ xComPortHandle xSerialPortInitMinimal( unsigned long ulWantedBaud, unsigned port
 		USART_ITConfig( USART1, USART_IT_RXNE, ENABLE );
 
 
-#ifdef CKLEE
+#ifndef CKLEE
 		/* NVIC configuration */
 		/* Configure the Priority Group to 2 bits */
-		NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); // CKLEE_TODO need?
+		NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4); // CKLEE_TODO need?
 #endif
 
 		/* Enable the USARTx Interrupt */
 		NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
-		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 15;
 		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 		NVIC_Init(&NVIC_InitStructure);
@@ -183,7 +183,7 @@ xComPortHandle xSerialPortInitMinimal( unsigned long ulWantedBaud, unsigned port
 		USART_Cmd( USART1, ENABLE );		
 
 
-#ifndef CKLEE_IRDA
+#ifdef CKLEE_IRDA
 		USART_SetPrescaler(USART1, 0x1);
 		/* Configure the USARTy IrDA mode */
 		USART_IrDAConfig(USART1, USART_IrDAMode_Normal);
@@ -274,11 +274,12 @@ void vSerialClose( xComPortHandle xPort )
 
 void vUARTInterruptHandler( void )
 {
-portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+//portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+portBASE_TYPE xHigherPriorityTaskWoken = pdTRUE;
 char cChar;
 
 
-GPIO_SetBits(GPIOG, GPIO_Pin_12);
+
 	if( USART_GetITStatus( USART1, USART_IT_TXE ) == SET )
 	{
 		/* The interrupt was caused by the THR becoming empty.  Are there any
@@ -296,6 +297,7 @@ GPIO_SetBits(GPIOG, GPIO_Pin_12);
 	}
 	
 	if( USART_GetITStatus( USART1, USART_IT_RXNE ) == SET )
+	//while ( USART_GetITStatus( USART1, USART_IT_RXNE ) == SET )
 	{
 		cChar = USART_ReceiveData( USART1 );
 		xQueueSendFromISR( xRxedChars, &cChar, &xHigherPriorityTaskWoken );
